@@ -1,0 +1,135 @@
+from tkinter import *
+from tkinter import ttk
+from tkinter.messagebox import showinfo
+from tkinter import filedialog
+import os
+
+
+def calculate():
+    val1 = int(textbox1.get())
+    val2 = int(textbox2.get())
+    textbox3.delete(0, END)
+    if val2 ==0:
+        return None
+    operation = combobox.get()
+    if operation == '+':
+        textbox3.insert(0, str(val1 + val2))
+    elif operation == '-':
+        textbox3.insert(0, str(val1 - val2))
+    elif operation == '*':
+        textbox3.insert(0, str(val1 * val2))
+    elif operation == '/':
+        textbox3.insert(0, str(val1 / val2))
+
+
+def show_message():
+    if ch1.get() == 1:
+        showinfo(title="Info", message="Первый")
+    if ch2.get() == 1:
+        showinfo(title="Info", message="Второй")
+    if ch3.get() == 1:
+        showinfo(title="Info", message="Третий")
+
+
+root = Tk()
+
+
+root.title('Бобрышева Татьяна Сергеевна')
+root.geometry('340x200')
+root.resizable(width=False, height=False)
+
+tab_control = ttk.Notebook(root)
+
+tab1 = ttk.Frame(tab_control)
+tab2 = ttk.Frame(tab_control)
+tab3 = ttk.Frame(tab_control)
+
+tab_control.add(tab1, text='Калькулятор')
+tab_control.add(tab2, text='checkboxes')
+tab_control.add(tab3, text='Текст')
+
+# -------------------tab1----------------------------------------
+textbox1 = Entry(tab1, bg="white", width=5, borderwidth=2)
+textbox1.pack(side=LEFT, padx=10)
+
+
+# Создайте виджет со списком
+var = StringVar()
+combobox = ttk.Combobox(tab1, textvariable = var, width=3)
+combobox['values'] = ('+', '-', '*', '/')
+combobox['state'] = 'readonly'
+# combobox.grid(column=2, row=2)
+combobox.pack(side=LEFT)
+
+textbox2 = Entry(tab1, bg="white", width=5, borderwidth=2)
+# textbox.grid(column=3, row=2)
+textbox2.pack(side=LEFT, padx=10)
+
+lb=Label(tab1,text='=')
+# lb.grid(column=4,row=2)
+lb.pack(side=LEFT)
+
+
+textbox3 = Entry(tab1, bg="white", width=5, borderwidth=2)
+# textbox.grid(column=5, row=2)
+textbox3.pack(side=LEFT, padx=10)
+
+
+btn = Button(tab1, text="Расчет", command=calculate)
+btn.pack(side=LEFT)
+
+
+# -------------------tab2----------------------------------------
+
+ch1 = IntVar()
+ch2 = IntVar()
+ch3 = IntVar()
+
+check1 = Checkbutton(tab2,text='Первый', onvalue=1, offvalue=0, variable=ch1)
+check1.pack(side=TOP, pady=5)
+
+check2 = Checkbutton(tab2,text='Второй', onvalue=1, offvalue=0, variable=ch2)
+check2.pack(side=TOP, pady=5)
+
+check3 =  Checkbutton(tab2,text='Третий', onvalue=1, offvalue=0, variable=ch3)
+check3.pack(side=TOP, pady=5)
+
+btn = Button(tab2, text="ok", width=10, command=show_message)
+btn.pack(side=TOP, pady=5)
+# -------------------tab3----------------------------------------
+text_box = Text(tab3, height=12, width=40)
+text_box.pack(expand=True)
+m = Menu(text_box, tearoff=0)
+
+def handleClick():
+    tf = filedialog.askopenfilename(
+        initialdir=os.getcwd(),
+        title="Open Text file",
+        filetypes=(("Text Files", "*.txt"),)
+    )
+    if len(tf) == 0:
+        return
+    with open(tf, 'r', encoding='utf-8') as f:
+        data = f.read()
+        text_box.insert(END, data)
+
+m.add_command(label="Load text", command=handleClick)
+
+
+def do_popup(event):
+    try:
+        m.tk_popup(event.x_root, event.y_root)
+    finally:
+        m.grab_release()
+
+text_box.bind("<Button-3>", do_popup)
+
+# ---------------------------------------------------------------
+
+# tab_control.pack(expand=1, fill='both')
+tab_control.pack(expand=1, fill='both')
+
+root.mainloop()
+
+
+
